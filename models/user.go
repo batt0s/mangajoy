@@ -2,22 +2,28 @@ package models
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"mangajoy/database"
+	"net/mail"
 	"time"
 
+	"github.com/batt0s/mangajoy/database"
+	"github.com/uptrace/bun"
+
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
-	LastLogin time.Time
-	IsAdmin   bool   `json:"is_admin" form:"is_admin"`
-	IsStaff   bool   `json:"is_staff" form:"is_staff"`
-	Username  string `form:"username" json:"username"`
-	Email     string `form:"email" json:"email"`
-	Password  string `form:"password" json:"password"`
+	bun.BaseModel `bun:"table:users"`
+	ID            int64     `json:"id" bun:"id,pk,autoincrement"`
+	CreatedAt     time.Time `json:"created_at" bun:",nullzero,notnull,default:current_timestamp"`
+	UpdatedAt     time.Time `json:"updated_at" bun:",nullzero,notnull,default:current_timestamp"`
+	LastLogin     time.Time `json:"last_login"`
+	IsAdmin       bool      `json:"is_admin" form:"is_admin"`
+	IsStaff       bool      `json:"is_staff" form:"is_staff"`
+	Username      string    `form:"username" json:"username" bun:",unique"`
+	Email         string    `form:"email" json:"email" bun:",unique"`
+	Password      string    `form:"password" json:"password"`
 }
 
 func (u User) String() string {
@@ -27,7 +33,10 @@ func (u User) String() string {
 
 func (u *User) Save() error {
 	ctx := context.Background()
-	pwdHash, err := CreateHash(u.Password)
+	if !u.IsValid() {
+		return errors.New("user not valid")
+	}
+	pwdHash, err := createHash(u.Password)
 	if err != nil {
 		return err
 	}
@@ -38,6 +47,24 @@ func (u *User) Save() error {
 	return nil
 }
 
+func (u *User) IsValid() bool {
+	if len(u.Password) < 6 {
+		return false
+	}
+	if len(u.Username) < 4 {
+		return false
+	}
+	if !isValidEmail(u.Email) {
+		return false
+	}
+	return true
+}
+
+func isValidEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
+}
+
 func Authenticate(email, password string) (*User, error) {
 	user := &User{}
 	var err error
@@ -46,14 +73,14 @@ func Authenticate(email, password string) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = CheckPassword(user.Password, password)
+	err = checkPassword(user.Password, password)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func CreateHash(pwd string) (string, error) {
+func createHash(pwd string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
@@ -61,7 +88,7 @@ func CreateHash(pwd string) (string, error) {
 	return string(bytes), nil
 }
 
-func CheckPassword(hash, givenPwd string) error {
+func checkPassword(hash, givenPwd string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(givenPwd))
 	return err
 }

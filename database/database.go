@@ -4,8 +4,9 @@ package database
 import (
 	"database/sql"
 	"log"
-	"mangajoy/config"
 	"strings"
+
+	"github.com/batt0s/mangajoy/config"
 
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/sqlitedialect"
@@ -32,7 +33,7 @@ func InitDB(mode string) error {
 			bundebug.WithVerbose(true),
 		))
 	case "test":
-		sqldb, err := sql.Open(sqliteshim.ShimName, "flie::memory?cache=shared")
+		sqldb, err := sql.Open(sqliteshim.ShimName, "test.db") //"flie::memory?cache=shared"
 		if err != nil {
 			return err
 		}
