@@ -7,26 +7,19 @@ import (
 	"github.com/go-gin/gin"
 )
 
-func RegisterController(ctx *gin.Context) {
-	var newUser models.User
-	if err := ctx.BindJSON(&newUser); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid request payload.",
-			"error":   err.Error(),
-		})
-		return
+type UserViews struct{}
+
+func (uw UserViews) Register(ctx *gin.Context) {
+	if ctx.Request.Method == "GET" {
+		ctx.HTML(http.StatusOK, "user/register", nil)
 	}
-	if newUser.IsValid() {
-		newUser.Save()
-		ctx.JSON(http.StatusOK, gin.H{
-			"message": "User created succesfully.",
-			"user":    newUser,
-		})
-		return
-	} else {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "User couldn't created.",
-			"error":   "User is not valid.",
-		})
+	if ctx.Request.Method == "POST" {
+		var newUser models.User
+		var err error
+		if err = ctx.Bind(&newUser); err != nil {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+		ctx.Redirect(http.StatusOK, "/")
 	}
 }

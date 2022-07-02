@@ -35,6 +35,13 @@ func (app *App) Init(mode string) error {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
+	// Load HTML Templates
+	router.LoadHTMLGlob("templates/**/*.gohtml")
+	// Static
+	router.Static("/static", "static")
+
+	// Routes
+
 	app.Router = router
 
 	// Initialize App

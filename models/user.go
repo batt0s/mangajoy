@@ -15,15 +15,21 @@ import (
 
 type User struct {
 	bun.BaseModel `bun:"table:users"`
-	ID            int64     `json:"id" bun:"id,pk,autoincrement"`
-	CreatedAt     time.Time `json:"created_at" bun:",nullzero,notnull,default:current_timestamp"`
-	UpdatedAt     time.Time `json:"updated_at" bun:",nullzero,notnull,default:current_timestamp"`
-	LastLogin     time.Time `json:"last_login"`
-	IsAdmin       bool      `json:"is_admin" form:"is_admin"`
-	IsStaff       bool      `json:"is_staff" form:"is_staff"`
-	Username      string    `form:"username" json:"username" bun:",unique"`
-	Email         string    `form:"email" json:"email" bun:",unique"`
-	Password      string    `form:"password" json:"password"`
+	ID            int64      `json:"id" bun:"id,pk,autoincrement"`
+	CreatedAt     time.Time  `json:"created_at" bun:",nullzero,notnull,default:current_timestamp"`
+	UpdatedAt     time.Time  `json:"updated_at" bun:",nullzero,notnull,default:current_timestamp"`
+	LastLogin     time.Time  `json:"last_login"`
+	IsAdmin       bool       `json:"is_admin" form:"is_admin"`
+	IsStaff       bool       `json:"is_staff" form:"is_staff"`
+	Username      string     `form:"username" json:"username" bun:",unique"`
+	Email         string     `form:"email" json:"email" bun:",unique"`
+	Password      string     `form:"password" json:"password"`
+	Uploads       []*Chapter `bun:"rel:has-many,join:uploader_id"`
+}
+
+// This should be done before using the model for the first time
+func (u User) Init() {
+	database.DB.RegisterModel((*User)(nil))
 }
 
 func (u User) String() string {
@@ -31,7 +37,7 @@ func (u User) String() string {
 		u.ID, u.Username, u.Email, u.IsAdmin, u.IsStaff, u.LastLogin, u.CreatedAt, u.UpdatedAt)
 }
 
-func (u *User) Save() error {
+func (u *User) Create() error {
 	ctx := context.Background()
 	if !u.IsValid() {
 		return errors.New("user not valid")
@@ -42,6 +48,33 @@ func (u *User) Save() error {
 	}
 	u.Password = pwdHash
 	if _, err := database.DB.NewInsert().Model(u).Exec(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
+// DO NOT USE THIS TO UPDATE THE PASSWORD. USE SetPassword() INSTEAD
+func (u *User) Update() error {
+	ctx := context.Background()
+	if !u.IsValid() {
+		return errors.New("user not valid")
+	}
+	_, err := database.DB.NewUpdate().Model(u).WherePK().Exec(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *User) SetPassword(newPass string) error {
+	ctx := context.Background()
+	newHash, err := createHash(newPass)
+	if err != nil {
+		return err
+	}
+	u.Password = newHash
+	_, err = database.DB.NewUpdate().Model(u).Column("password").Where("id = ?", u.ID).Exec(ctx)
+	if err != nil {
 		return err
 	}
 	return nil
