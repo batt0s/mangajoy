@@ -15,23 +15,34 @@ import (
 
 type User struct {
 	bun.BaseModel `bun:"table:users"`
-	ID            int64      `json:"id" bun:"id,pk,autoincrement"`
-	CreatedAt     time.Time  `json:"created_at" bun:",nullzero,notnull,default:current_timestamp"`
-	UpdatedAt     time.Time  `json:"updated_at" bun:",nullzero,notnull,default:current_timestamp"`
-	LastLogin     time.Time  `json:"last_login"`
-	IsAdmin       bool       `json:"is_admin" form:"is_admin"`
-	IsStaff       bool       `json:"is_staff" form:"is_staff"`
-	Username      string     `form:"username" json:"username" bun:",unique"`
-	Email         string     `form:"email" json:"email" bun:",unique"`
-	Password      string     `form:"password" json:"password"`
-	Uploads       []*Chapter `bun:"rel:has-many,join:uploader_id"`
+	ID            int64     `json:"id" bun:"id,pk,autoincrement"`
+	CreatedAt     time.Time `json:"created_at" bun:",nullzero,notnull,default:current_timestamp"`
+	UpdatedAt     time.Time `json:"updated_at" bun:",nullzero,notnull,default:current_timestamp"`
+	LastLogin     time.Time `json:"last_login"`
+	IsAdmin       bool      `json:"is_admin" form:"is_admin"`
+	IsStaff       bool      `json:"is_staff" form:"is_staff"`
+	Username      string    `form:"username" json:"username" bun:",unique"`
+	Email         string    `form:"email" json:"email" bun:",unique"`
+	Password      string    `form:"password" json:"password"`
+	Avatar        string
+	Uploads       []*Chapter `bun:"rel:has-many,join:id=uploader_id"`
+}
+
+func CreateUserTable() error {
+	ctx := context.Background()
+	_, err := database.DB.NewCreateTable().Model((*User)(nil)).Exec(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // This should be done before using the model for the first time
-func (u User) Init() {
+func InitUserModel() {
 	database.DB.RegisterModel((*User)(nil))
 }
 
+// User<ID, Username, Email, IsAdmin, IsStaff, LastLogin, CreatedAt, UpdatedAt>
 func (u User) String() string {
 	return fmt.Sprintf("User<%d, %s, %s, %v, %v, %v, %v - %v>",
 		u.ID, u.Username, u.Email, u.IsAdmin, u.IsStaff, u.LastLogin, u.CreatedAt, u.UpdatedAt)
@@ -78,6 +89,12 @@ func (u *User) SetPassword(newPass string) error {
 		return err
 	}
 	return nil
+}
+
+func (u *User) Delete() error {
+	ctx := context.Background()
+	_, err := database.DB.NewDelete().Model(u).WherePK().Exec(ctx)
+	return err
 }
 
 func (u *User) IsValid() bool {
