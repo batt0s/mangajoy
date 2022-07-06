@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/batt0s/mangajoy/config"
+	"github.com/batt0s/mangajoy/settings"
 
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/sqlitedialect"
@@ -23,7 +23,8 @@ func InitDB(mode string) error {
 	mode = strings.ToLower(mode)
 	switch mode {
 	case "dev":
-		name := config.Conf.GetString("dev.db.name")
+		dev := settings.DATABASES["dev"].(map[string]string)
+		name := dev["name"]
 		sqlite, err := sql.Open(sqliteshim.ShimName, name)
 		if err != nil {
 			return err
@@ -42,7 +43,8 @@ func InitDB(mode string) error {
 			bundebug.WithVerbose(true),
 		))
 	default:
-		sqldb, err := sql.Open(sqliteshim.ShimName, "database.db")
+		name := settings.DATABASES["default"].(map[string]string)["name"]
+		sqldb, err := sql.Open(sqliteshim.ShimName, name)
 		if err != nil {
 			return err
 		}

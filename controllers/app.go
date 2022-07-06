@@ -9,6 +9,7 @@ import (
 
 	"github.com/batt0s/mangajoy/config"
 	"github.com/batt0s/mangajoy/database"
+	"github.com/batt0s/mangajoy/settings"
 	"github.com/go-gin/gin"
 )
 
@@ -21,11 +22,6 @@ type App struct {
 
 // Initialize app
 func (app *App) Init(mode string) error {
-	// Load config from config.json
-	err := config.LoadConfig()
-	if err != nil {
-		log.Fatalf("Failed to load config files.\nError: %s", err.Error())
-	}
 
 	// Initialize database
 	database.InitDB(mode)
@@ -38,7 +34,7 @@ func (app *App) Init(mode string) error {
 	// Load HTML Templates
 	router.LoadHTMLGlob("templates/**/*.gohtml")
 	// Static
-	router.Static("/static", "static")
+	router.Static("/static", settings.STATIC_ROOT)
 
 	// Routes
 
