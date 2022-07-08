@@ -7,10 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/batt0s/mangajoy/config"
 	"github.com/batt0s/mangajoy/database"
 	"github.com/batt0s/mangajoy/settings"
-	"github.com/go-gin/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // App struct has address as string and router as gin.Engine
@@ -23,6 +22,16 @@ type App struct {
 // Initialize app
 func (app *App) Init(mode string) error {
 
+	// gin mode
+	switch mode {
+	case "prod":
+		gin.SetMode(gin.ReleaseMode)
+	case "dev":
+		gin.SetMode(gin.DebugMode)
+	case "test":
+		gin.SetMode(gin.TestMode)
+	}
+
 	// Initialize database
 	database.InitDB(mode)
 
@@ -32,24 +41,25 @@ func (app *App) Init(mode string) error {
 	router.Use(gin.Recovery())
 
 	// Load HTML Templates
-	router.LoadHTMLGlob("templates/**/*.gohtml")
+	router.LoadHTMLGlob(settings.TEMPLATES_ROOT + "/**/*.gohtml")
 	// Static
 	router.Static("/static", settings.STATIC_ROOT)
 
 	// Routes
+	userGroup := router.Group("/user")
+	{
+		user := UserViews{}
+		userGroup.GET("/register", user.Register)
+		userGroup.POST("/register", user.Register)
+	}
 
 	app.Router = router
 
 	// Initialize App
 	log.Println("App Mode : ", mode)
 	var host, port string
-	if mode == "prod" {
-		port = os.Getenv("PORT")
-		host = "0.0.0.0"
-	} else {
-		port = config.Conf.GetString(mode + ".port")
-		host = config.Conf.GetString(mode + ".host")
-	}
+	host = "0.0.0.0"
+	port = os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 		log.Println("[warning] No port found. Defaulting to 8080.")

@@ -24,7 +24,7 @@ func InitDB(mode string) error {
 	switch mode {
 	case "dev":
 		dev := settings.DATABASES["dev"].(map[string]string)
-		name := dev["name"]
+		name := dev["NAME"]
 		sqlite, err := sql.Open(sqliteshim.ShimName, name)
 		if err != nil {
 			return err

@@ -1,0 +1,23 @@
+{{ define "user/success" }}
+{{ template "_header" . }}
+{{ if .success }}
+<!-- 5 saniye sonra "/" e yönlendirme-->
+<meta http-equiv="refresh" content="3; url=/" />
+{{ else }}
+<!-- 5 saniye sonra "/" e yönlendirme-->
+<meta http-equiv="refresh" content="3" />
+{{ end }}
+<!-- countdown gerisayım -->
+<progress value="0" max="3" id="progressBar"></progress>
+<script>
+var timeleft = 3;
+var timer = setInterval(function(){
+  if(timeleft <= 0){
+    clearInterval(timer);
+  }
+  document.getElementById("progressBar").value = 3 - timeleft;
+  timeleft -= 1;
+}, 1000);
+</script>
+{{ template "_footer" }}
+{{ end }}
