@@ -8,7 +8,10 @@ import (
 	"os"
 
 	"github.com/batt0s/mangajoy/database"
+	"github.com/batt0s/mangajoy/middlewares"
 	"github.com/batt0s/mangajoy/settings"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,10 +38,11 @@ func (app *App) Init(mode string) error {
 	// Initialize database
 	database.InitDB(mode)
 
-	// Initialize router
+	// Initialize router and middlewares (sessions, logger, recovery etc.)
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Use(sessions.Sessions("session", cookie.NewStore([]byte(settings.SECRET_KEY))))
 
 	// Load HTML Templates
 	router.LoadHTMLGlob(settings.TEMPLATES_ROOT + "/**/*.gohtml")
@@ -46,11 +50,16 @@ func (app *App) Init(mode string) error {
 	router.Static("/static", settings.STATIC_ROOT)
 
 	// Routes
+	router.GET("/", HomePageHandler)
 	userGroup := router.Group("/user")
 	{
 		user := UserViews{}
-		userGroup.GET("/register", user.Register)
-		userGroup.POST("/register", user.Register)
+		userGroup.GET("/register", user.RegisterGet)
+		userGroup.POST("/register", user.RegisterPost)
+		userGroup.GET("/login", user.LoginGet)
+		userGroup.POST("/login", user.LoginPost)
+		userGroup.GET("/dashboard", user.Dashboard).Use(middlewares.LoginRequired)
+		userGroup.GET("/logout", user.Logout).Use(middlewares.LoginRequired)
 	}
 
 	app.Router = router

@@ -142,3 +142,14 @@ func checkPassword(hash, givenPwd string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(givenPwd))
 	return err
 }
+
+func GetUserWithUsername(username string) (*User, error) {
+	user := new(User)
+	var err error
+	ctx := context.Background()
+	err = database.DB.NewSelect().Model(user).Where("username = ?", username).Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}

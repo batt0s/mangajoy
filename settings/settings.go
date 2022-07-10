@@ -7,6 +7,8 @@ import (
 
 var BASEPATH string = getBasePath()
 
+var SECRET_KEY string = getSecretFromEnv()
+
 var DATABASES = map[string]interface{}{
 	"default": map[string]string{
 		"NAME": "database.db",
@@ -30,3 +32,14 @@ func getBasePath() string {
 	}
 	return path
 }
+
+func getSecretFromEnv() string {
+	secret := os.Getenv("SECRET")
+	if secret == "" {
+		log.Println("[warning] No SECRET in env.")
+		secret = "ultimatesecretkeyolc0IHuxdn9h8FyIe6GpzQkP3ZbBznJ3"
+	}
+	return secret
+}
+
+const USER_COOKIE string = "user"

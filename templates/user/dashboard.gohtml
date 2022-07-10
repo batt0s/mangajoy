@@ -1,0 +1,9 @@
+{{ define "user/dashboard" }}
+{{ template "_header" . }}
+<h1>Dashboard</h1>
+<br>
+<h3>{{ .user.Username }}</h3>
+<p>{{ .user }}</p>
+<p>{{ .user.Uploads }}</p>
+{{ template "_footer" }}
+{{ end }}
