@@ -50,9 +50,6 @@ func (u User) String() string {
 
 func (u *User) Create() error {
 	ctx := context.Background()
-	if !u.IsValid() {
-		return errors.New("user not valid")
-	}
 	pwdHash, err := createHash(u.Password)
 	if err != nil {
 		return err
@@ -115,11 +112,11 @@ func isValidEmail(email string) bool {
 	return err == nil
 }
 
-func Authenticate(email, password string) (*User, error) {
+func Authenticate(username, password string) (*User, error) {
 	user := &User{}
 	var err error
 	ctx := context.Background()
-	err = database.DB.NewSelect().Model(user).Where("email = ?", email).Scan(ctx)
+	err = database.DB.NewSelect().Model(user).Where("username = ?", username).Scan(ctx)
 	if err != nil {
 		return nil, err
 	}

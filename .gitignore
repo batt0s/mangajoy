@@ -9,3 +9,9 @@ tmp/
 
 # builded executable
 mangajoy
+
+# static files
+static/**/**/*
+
+# vscode debug 
+.vscode/

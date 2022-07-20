@@ -12,7 +12,7 @@ import (
 
 type Chapter struct {
 	bun.BaseModel `bun:"table:chapters"`
-	ID            int64      `bun:",pk"`
+	ID            int64      `bun:"id,pk,autoincrement"`
 	CreatedAt     time.Time  `bun:",nullzero,notnull,default:current_timestamp"`
 	UpdatedAt     time.Time  `bun:",nullzero,notnull,default:current_timestamp"`
 	MangaID       int64      `form:"manga"`

@@ -90,3 +90,14 @@ func GetArtistByID(id int64) (*Artist, error) {
 	}
 	return artist, nil
 }
+
+func GetAllArtist() ([]Artist, error) {
+	var artists []Artist
+	var err error
+	ctx := context.Background()
+	err = database.DB.NewSelect().Model(&artists).Scan(ctx)
+	if err != nil {
+		return []Artist{}, err
+	}
+	return artists, nil
+}

@@ -1,8 +1,9 @@
 {{ define "user/dashboard" }}
 {{ template "_header" . }}
 <h1>Dashboard</h1>
-<br>
+<hr>
 <h3>{{ .user.Username }}</h3>
+<img src="/{{ .user.Avatar }}" alt="avatar" height=300 />
 <p>{{ .user }}</p>
 <p>{{ .user.Uploads }}</p>
 {{ template "_footer" }}

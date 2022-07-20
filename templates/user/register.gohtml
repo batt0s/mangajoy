@@ -2,9 +2,10 @@
 {{ template "_header" . }}
 <h1> Kullanıcı Kayıt </h1>
 <br>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <input type="text" placeholder="username" name="username">
     <input type="text" placeholder="email" name="email">
+    avatar <input type="file" name="avatar">
     <input type="password" placeholder="password" name="password">
     <button type="submit">register</button>
 </form>

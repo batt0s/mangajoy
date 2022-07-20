@@ -1,0 +1,9 @@
+{{ define "chapter/show" }}
+    {{ template "_header" . }}
+    <h1>{{ .chapter.Title }}</h1>
+    <hr>
+    {{ range .chapter.Pages }}
+        <img src="/{{ . }}" height="250">
+    {{ end }}
+    {{ template "_footer" }}
+{{ end }}

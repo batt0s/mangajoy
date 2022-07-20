@@ -10,9 +10,10 @@ import (
 	"github.com/uptrace/bun"
 )
 
+// TODO Add rating to manga
 type Manga struct {
 	bun.BaseModel    `bun:"table:mangas"`
-	ID               int64     `bun:",pk"`
+	ID               int64     `bun:"id,pk,autoincrement"`
 	CreatedAt        time.Time `bun:",nullzero,notnull,default:current_timestamp"`
 	UpdatedAt        time.Time `bun:",nullzero,notnull,default:current_timestamp"`
 	ArtistID         int64     `form:"artist"`

@@ -58,8 +58,30 @@ func (app *App) Init(mode string) error {
 		userGroup.POST("/register", user.RegisterPost)
 		userGroup.GET("/login", user.LoginGet)
 		userGroup.POST("/login", user.LoginPost)
-		userGroup.GET("/dashboard", user.Dashboard).Use(middlewares.LoginRequired)
-		userGroup.GET("/logout", user.Logout).Use(middlewares.LoginRequired)
+		userGroup.GET("/dashboard", middlewares.LoginRequired, user.Dashboard)
+		userGroup.GET("/logout", middlewares.LoginRequired, user.Logout)
+	}
+	mangaGroup := router.Group("/manga")
+	{
+		manga := MangaViews{}
+		mangaGroup.GET("", manga.List)
+		mangaGroup.GET("/new", middlewares.LoginRequired, manga.New)
+		mangaGroup.POST("/create", middlewares.LoginRequired, manga.Create)
+		mangaGroup.GET("/:mangaid", manga.Show)
+	}
+	chapterGroup := router.Group("/chapter")
+	{
+		chapter := ChapterViews{}
+		chapterGroup.GET("/view/:chapterid", chapter.Show)
+		chapterGroup.GET("/new/:mangaid", middlewares.LoginRequired, chapter.New)
+		chapterGroup.POST("/create", middlewares.LoginRequired, chapter.Create)
+	}
+	artistGroup := router.Group("/artist")
+	{
+		artist := ArtistViews{}
+		artistGroup.GET("/:artistid", middlewares.LoginRequired, artist.Show)
+		artistGroup.GET("/new", middlewares.LoginRequired, artist.New)
+		artistGroup.POST("/create", artist.Create)
 	}
 
 	app.Router = router

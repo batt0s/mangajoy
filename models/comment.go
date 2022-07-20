@@ -12,7 +12,7 @@ import (
 
 type Comment struct {
 	bun.BaseModel `bun:"table:comments"`
-	ID            int64     `bun:",pk"`
+	ID            int64     `bun:"id,pk,autoincrement"`
 	CreatedAt     time.Time `bun:",nullzero,notnull,default:current_timestamp"`
 	UpdatedAt     time.Time `bun:",nullzero,notnull,default:current_timestamp"`
 	ChapterID     int64     `form:"chapter"`

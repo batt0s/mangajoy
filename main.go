@@ -26,6 +26,11 @@ func main() {
 		if os.Args[1] == "migrate" {
 			migrate(appMode)
 		}
+		if os.Args[1] == "createsuperuser" {
+			username := os.Args[2]
+			password := os.Args[3]
+			createsuperuser(username, password)
+		}
 	}
 
 }
@@ -51,11 +56,31 @@ func migrate(mode string) {
 	log.Println("Done.")
 }
 
+func createsuperuser(username, password string) {
+	log.Println("Creating superuser.")
+	if err := database.InitDB("dev"); err != nil {
+		log.Printf("Error while init database.\n%s", err.Error())
+		os.Exit(1)
+	}
+	user := new(models.User)
+	user.Username = username
+	user.Password = password
+	user.IsStaff = true
+	user.IsAdmin = true
+	err := user.Create()
+	if err != nil {
+		log.Printf("Error while creating super user.\n%s", err.Error())
+		os.Exit(1)
+	}
+	log.Println("Done.")
+}
+
 func printhelp() {
 	fmt.Println(`
 	MangaJoy Server
 	
 To run: mangajoy runserver
 To migrate models: mangajoy migrate 
+To create super user: mangajoy createsuperuser
 	`)
 }

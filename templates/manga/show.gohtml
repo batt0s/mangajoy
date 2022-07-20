@@ -1,0 +1,11 @@
+{{ define "manga/show" }}
+{{ template "_header" . }}
+<h1>{{ .manga.Title }}</h1>
+<img src="/{{ .manga.Cover }}" alt="manga cover" height="250">
+{{ range .manga.Chapters }}
+    <a href="/chapter/view/{{ .ID }}">{{ .Title }}</a>
+{{ end }}
+<p>{{ .manga }}</p>
+<a href="/chapter/new/{{ .manga.ID }}">Yeni chapter ekle</a>
+{{ template "_footer" }}
+{{ end }}

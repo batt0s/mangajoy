@@ -1,0 +1,12 @@
+{{ define "manga/list" }}
+{{ template "_header" . }}
+<h1>Son mangalar</h1>
+<hr>
+<a href="/manga/new">Yeni Manga Ekle</a>
+<ul>
+{{ range .mangas }}
+    <li><a href="/manga/{{ .ID }}">{{ .Title }}</a></li>
+{{ end }}
+</ul>
+{{ template "_footer" }}
+{{ end }}
