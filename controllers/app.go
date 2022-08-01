@@ -68,11 +68,14 @@ func (app *App) Init(mode string) error {
 		mangaGroup.GET("/new", middlewares.LoginRequired, manga.New)
 		mangaGroup.POST("/create", middlewares.LoginRequired, manga.Create)
 		mangaGroup.GET("/:mangaid", manga.Show)
+		mangaGroup.GET("/:mangaid/update", manga.UpdateView)
+		mangaGroup.POST("/:mangaid/update", manga.Update)
+		mangaGroup.DELETE("/:mangaid", middlewares.LoginRequired, manga.Delete)
 	}
 	chapterGroup := router.Group("/chapter")
 	{
 		chapter := ChapterViews{}
-		chapterGroup.GET("/view/:chapterid", chapter.Show)
+		chapterGroup.GET("/:chapterid", chapter.Show)
 		chapterGroup.GET("/new/:mangaid", middlewares.LoginRequired, chapter.New)
 		chapterGroup.POST("/create", middlewares.LoginRequired, chapter.Create)
 	}

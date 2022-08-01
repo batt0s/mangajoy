@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -43,12 +44,17 @@ func (MangaViews) Show(ctx *gin.Context) {
 }
 
 func (MangaViews) New(ctx *gin.Context) {
-	user, ok := ctx.Get("user")
+	//	user, ok := ctx.Get("user")
+	//	if !ok {
+	//		ctx.AbortWithStatus(http.StatusInternalServerError)
+	//		return
+	//    }
+	user, ok := getUser(ctx)
 	if !ok {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	if !user.(*models.User).IsStaff {
+	if !user.IsStaff {
 		ctx.AbortWithStatus(http.StatusForbidden)
 		return
 	}
@@ -93,11 +99,14 @@ func (MangaViews) Create(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	redirectUrl := "/manga/" + strconv.Itoa(int(manga.ID))
+	// redirect to manga page
+	redirectUrl := fmt.Sprintf("/manga/%d", manga.ID)
 	ctx.Redirect(http.StatusCreated, redirectUrl)
+	ctx.Abort()
 }
 
 func (MangaViews) UpdateView(ctx *gin.Context) {
+
 	var manga *models.Manga
 	var err error
 	mangaid, err := strconv.Atoi(ctx.Param("mangaid"))
@@ -148,5 +157,33 @@ func (MangaViews) Update(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	ctx.Redirect(http.StatusCreated, "/manga/"+strconv.Itoa(int(manga.ID)))
+	redirectUrl := fmt.Sprintf("/manga/%d", int(manga.ID))
+	ctx.Redirect(http.StatusCreated, redirectUrl)
+	ctx.Abort()
+}
+
+func (MangaViews) Delete(ctx *gin.Context) {
+	user, ok := getUser(ctx)
+	if !ok {
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	if !user.IsStaff {
+		ctx.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+	var manga = new(models.Manga)
+	var err error
+	mangaid, _ := strconv.Atoi(ctx.Param("mangaid"))
+	manga, err = models.GetMangaByID(int64(mangaid))
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+	err = manga.Delete()
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	ctx.AbortWithStatus(http.StatusNoContent)
 }

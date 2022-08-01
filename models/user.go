@@ -140,6 +140,17 @@ func checkPassword(hash, givenPwd string) error {
 	return err
 }
 
+func GetUserWithID(id int64) (*User, error) {
+	user := new(User)
+	var err error
+	ctx := context.Background()
+	err = database.DB.NewSelect().Model(user).Where("id = ?", id).Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return user, err
+}
+
 func GetUserWithUsername(username string) (*User, error) {
 	user := new(User)
 	var err error
