@@ -29,30 +29,12 @@ func (ArtistViews) Show(ctx *gin.Context) {
 }
 
 func (ArtistViews) New(ctx *gin.Context) {
-	user, ok := ctx.Get("user")
-	if !ok {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-	if !user.(*models.User).IsAdmin || !user.(*models.User).IsStaff {
-		ctx.AbortWithStatus(http.StatusForbidden)
-		return
-	}
 	ctx.HTML(http.StatusOK, "artist/new", gin.H{
 		"title": "Yeni artist",
 	})
 }
 
 func (ArtistViews) Create(ctx *gin.Context) {
-	user, ok := ctx.Get("user")
-	if !ok {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-	if !user.(*models.User).IsAdmin || !user.(*models.User).IsStaff {
-		ctx.AbortWithStatus(http.StatusForbidden)
-		return
-	}
 	var artist models.Artist
 	var err error
 	if err = ctx.ShouldBind(&artist); err != nil {

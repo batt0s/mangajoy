@@ -44,20 +44,6 @@ func (MangaViews) Show(ctx *gin.Context) {
 }
 
 func (MangaViews) New(ctx *gin.Context) {
-	//	user, ok := ctx.Get("user")
-	//	if !ok {
-	//		ctx.AbortWithStatus(http.StatusInternalServerError)
-	//		return
-	//    }
-	user, ok := getUser(ctx)
-	if !ok {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-	if !user.IsStaff {
-		ctx.AbortWithStatus(http.StatusForbidden)
-		return
-	}
 	artists, err := models.GetAllArtistNames()
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -106,7 +92,6 @@ func (MangaViews) Create(ctx *gin.Context) {
 }
 
 func (MangaViews) UpdateView(ctx *gin.Context) {
-
 	var manga *models.Manga
 	var err error
 	mangaid, err := strconv.Atoi(ctx.Param("mangaid"))
@@ -163,15 +148,6 @@ func (MangaViews) Update(ctx *gin.Context) {
 }
 
 func (MangaViews) Delete(ctx *gin.Context) {
-	user, ok := getUser(ctx)
-	if !ok {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-	if !user.IsStaff {
-		ctx.AbortWithStatus(http.StatusForbidden)
-		return
-	}
 	var manga = new(models.Manga)
 	var err error
 	mangaid, _ := strconv.Atoi(ctx.Param("mangaid"))

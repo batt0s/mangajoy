@@ -65,26 +65,26 @@ func (app *App) Init(mode string) error {
 	{
 		manga := MangaViews{}
 		mangaGroup.GET("", manga.List)
-		mangaGroup.GET("/new", middlewares.LoginRequired, manga.New)
-		mangaGroup.POST("/create", middlewares.LoginRequired, manga.Create)
+		mangaGroup.GET("/new", middlewares.LoginRequired, middlewares.StaffOnly, manga.New)
+		mangaGroup.POST("/create", middlewares.LoginRequired, middlewares.StaffOnly, manga.Create)
 		mangaGroup.GET("/:mangaid", manga.Show)
-		mangaGroup.GET("/:mangaid/update", manga.UpdateView)
-		mangaGroup.POST("/:mangaid/update", manga.Update)
-		mangaGroup.DELETE("/:mangaid", middlewares.LoginRequired, manga.Delete)
+		mangaGroup.GET("/:mangaid/update", middlewares.LoginRequired, middlewares.StaffOnly, manga.UpdateView)
+		mangaGroup.POST("/:mangaid/update", middlewares.LoginRequired, middlewares.StaffOnly, manga.Update)
+		mangaGroup.DELETE("/:mangaid", middlewares.LoginRequired, middlewares.StaffOnly, manga.Delete)
 	}
 	chapterGroup := router.Group("/chapter")
 	{
 		chapter := ChapterViews{}
 		chapterGroup.GET("/:chapterid", chapter.Show)
-		chapterGroup.GET("/new/:mangaid", middlewares.LoginRequired, chapter.New)
-		chapterGroup.POST("/create", middlewares.LoginRequired, chapter.Create)
+		chapterGroup.GET("/new/:mangaid", middlewares.LoginRequired, middlewares.StaffOnly, chapter.New)
+		chapterGroup.POST("/create", middlewares.LoginRequired, middlewares.StaffOnly, chapter.Create)
 	}
 	artistGroup := router.Group("/artist")
 	{
 		artist := ArtistViews{}
 		artistGroup.GET("/:artistid", middlewares.LoginRequired, artist.Show)
-		artistGroup.GET("/new", middlewares.LoginRequired, artist.New)
-		artistGroup.POST("/create", artist.Create)
+		artistGroup.GET("/new", middlewares.LoginRequired, middlewares.StaffOnly, artist.New)
+		artistGroup.POST("/create", middlewares.LoginRequired, middlewares.StaffOnly, artist.Create)
 	}
 
 	app.Router = router

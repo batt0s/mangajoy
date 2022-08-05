@@ -44,10 +44,6 @@ func (ChapterViews) Create(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	if !user.(*models.User).IsStaff {
-		ctx.AbortWithStatus(http.StatusForbidden)
-		return
-	}
 	var chapter models.Chapter
 	if err := ctx.ShouldBind(&chapter); err != nil {
 		ctx.AbortWithStatus(http.StatusNotFound)
