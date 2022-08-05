@@ -58,7 +58,7 @@ func (MangaViews) New(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusForbidden)
 		return
 	}
-	artists, err := models.GetAllArtist()
+	artists, err := models.GetAllArtistNames()
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
@@ -101,7 +101,7 @@ func (MangaViews) Create(ctx *gin.Context) {
 	}
 	// redirect to manga page
 	redirectUrl := fmt.Sprintf("/manga/%d", manga.ID)
-	ctx.Redirect(http.StatusCreated, redirectUrl)
+	ctx.Redirect(http.StatusSeeOther, redirectUrl)
 	ctx.Abort()
 }
 
@@ -158,7 +158,7 @@ func (MangaViews) Update(ctx *gin.Context) {
 		return
 	}
 	redirectUrl := fmt.Sprintf("/manga/%d", int(manga.ID))
-	ctx.Redirect(http.StatusCreated, redirectUrl)
+	ctx.Redirect(http.StatusSeeOther, redirectUrl)
 	ctx.Abort()
 }
 

@@ -74,5 +74,5 @@ func (ChapterViews) Create(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusNotFound)
 		return
 	}
-	ctx.Redirect(http.StatusCreated, "/manga/"+strconv.Itoa(int(chapter.MangaID)))
+	ctx.Redirect(http.StatusSeeOther, "/manga/"+strconv.Itoa(int(chapter.MangaID)))
 }

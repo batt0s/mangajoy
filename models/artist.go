@@ -101,3 +101,11 @@ func GetAllArtist() ([]Artist, error) {
 	}
 	return artists, nil
 }
+
+func GetAllArtistNames() ([]Artist, error) {
+	var artists []Artist
+	var err error
+	ctx := context.Background()
+	err = database.DB.NewSelect().Model(&artists).Column("id", "name").Scan(ctx)
+	return artists, err
+}

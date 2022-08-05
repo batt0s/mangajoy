@@ -116,7 +116,7 @@ func Authenticate(username, password string) (*User, error) {
 	user := &User{}
 	var err error
 	ctx := context.Background()
-	err = database.DB.NewSelect().Model(user).Where("username = ?", username).Scan(ctx)
+	err = database.DB.NewSelect().Model(user).Column("username", "password").Where("username = ?", username).Scan(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -161,3 +161,5 @@ func GetUserWithUsername(username string) (*User, error) {
 	}
 	return user, nil
 }
+
+// TODO: To use in middlewares and etc write a function that gets user's username email isStaff and isAdmin

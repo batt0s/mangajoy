@@ -81,5 +81,5 @@ func (ArtistViews) Create(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	ctx.Redirect(http.StatusCreated, "/artist/"+artistid)
+	ctx.Redirect(http.StatusSeeOther, "/artist/"+artistid)
 }
