@@ -1,0 +1,13 @@
+{{ define "chapter/new" }}
+{{ template "_header" . }}
+<h1>Chapter Ekle</h1>
+<hr>
+<form action="/chapter/create" method="post" enctype="multipart/form-data">
+    <input type="text" placeholder="Title" name="title"><br>
+    <input type="text" placeholder="Description" name="description"><br>
+    <input type="hidden" name="manga" value={{ .mangaid }} > <br>
+    Sayfalar (1.png, 2.png şeklinde olmalıdır.) <input type="file" name="pages" multiple><br>
+    <button type="submit">Ekle</button>
+</form>
+{{ template "_footer" }}
+{{ end }}

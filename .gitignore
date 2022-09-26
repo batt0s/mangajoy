@@ -1,0 +1,17 @@
+# log files
+*.log
+
+# local db
+*.db
+
+# temporary files
+tmp/
+
+# builded executable
+mangajoy
+
+# static files
+static/**/**/*
+
+# vscode debug 
+.vscode/

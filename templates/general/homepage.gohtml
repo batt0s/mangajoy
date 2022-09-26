@@ -1,0 +1,12 @@
+{{ define "homepage" }}
+{{ template "_header" . }}
+<h1>Homepage</h1>
+{{ if .user }}
+<p>Hoşgeldiniz, {{ .user }}.</p>
+{{ end }}
+<a href="/user/login">Giriş Yap</a>
+<a href="/user/register">Kayıt Ol</a>
+<a href="/user/dashboard">Dashboard</a>
+<a href="/manga">Mangalar</a>
+{{ template "_footer" }}
+{{ end }}

@@ -1,0 +1,19 @@
+{{ define "manga/new" }}
+{{ template "_header" . }}
+<h1>Manga Ekle</h1>
+<hr>
+<form action="/manga/create" method="post" enctype="multipart/form-data">
+    <input type="text" placeholder="Title" name="title"><br>
+    <input type="text" placeholder="Alternative Title" name="alternative_title"><br>
+    <input type="text" placeholder="Description" name="description"><br>
+    Artist : <select name="artist"><br>
+        {{ range .artists }}
+        <option value="{{ .ID }}">{{ .Name }}</option>
+        {{ end }}
+    </select><br>
+    Cover <input type="file" name="cover"><br>
+    <input type="text" placeholder="Tags" name="tags_"><br>
+    <button type="submit">Ekle</button>
+</form>
+{{ template "_footer" }}
+{{ end }}

@@ -1,0 +1,20 @@
+{{ define "manga/update" }}
+{{ template "_header" . }}
+<h1>Manga Güncelle</h1>
+<hr>
+<form action="/manga/{{ .manga.ID }}/update" method="post" enctype="multipart/form-data">
+    <input type="text" placeholder="Title" name="title" value="{{ .manga.Title }}"><br>
+    <input type="text" placeholder="Alternative Title" name="alternative_title" value="{{ .manga.AlternativeTitle }}"><br>
+    <input type="text" placeholder="Description" name="description" value="{{ .manga.Description }}"><br>
+    Artist : <select name="artist"><br>
+        <option value="{{ .manga.ArtistID }}" selected></option>
+        {{ range .artists }}
+        <option value="{{ .ID }}">{{ .Name }}</option>
+        {{ end }}
+    </select><br>
+    <!-- Cover <input type="file" name="cover" value=""><br> -->
+    <input type="text" placeholder="Tags" name="tags_" value="{{ .manga.Tags }}"><br>
+    <button type="submit">Güncelle</button>
+</form>
+{{ template "_footer" }}
+{{ end }}
